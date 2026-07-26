@@ -80,9 +80,23 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  const setCurrentUser = useCallback((nextUser) => {
+    setUser(nextUser)
+  }, [])
+
   const value = useMemo(
-    () => ({ user, loading, error, isAuthenticated: Boolean(user), login, logout, register, refreshUser: loadCurrentUser }),
-    [error, loadCurrentUser, loading, login, logout, register, user],
+    () => ({
+      user,
+      loading,
+      error,
+      isAuthenticated: Boolean(user),
+      login,
+      logout,
+      register,
+      refreshUser: loadCurrentUser,
+      setCurrentUser,
+    }),
+    [error, loadCurrentUser, loading, login, logout, register, setCurrentUser, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
