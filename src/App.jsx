@@ -7,6 +7,7 @@ import { AccountCenter } from './pages/AccountCenter'
 import { Channel } from './pages/Channel'
 import { Dashboard } from './pages/Dashboard'
 import { History } from './pages/History'
+import { LandingPage } from './pages/LandingPage'
 import { PlaylistDetail } from './pages/PlaylistDetail'
 import { Studio } from './pages/Studio'
 import { Subscribers } from './pages/Subscribers'
@@ -36,7 +37,7 @@ function PublicAuth({ mode }) {
   }
 
   if (isAuthenticated) {
-    return <Navigate replace to={location.state?.from?.pathname || '/'} />
+    return <Navigate replace to={location.state?.from?.pathname || '/feed'} />
   }
 
   return <AuthForms initialMode={mode} />
@@ -47,10 +48,11 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route element={<LandingPage />} path="/" />
           <Route element={<PublicAuth mode="login" />} path="/login" />
           <Route element={<PublicAuth mode="signup" />} path="/signup" />
           <Route element={<RequireAuth />}>
-            <Route element={<Dashboard activeView="home" />} index />
+            <Route element={<Dashboard activeView="home" />} path="/feed" />
             <Route element={<Dashboard activeView="watch" />} path="/watch/:videoId" />
             <Route element={<Dashboard activeView="tweets" />} path="/tweets" />
             <Route element={<Dashboard activeView="library" />} path="/library" />

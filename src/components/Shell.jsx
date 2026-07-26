@@ -4,7 +4,7 @@ import { Footer } from './Footer'
 import { Header } from './Header'
 
 const navItems = [
-  { id: 'home', label: 'Home', to: '/' },
+  { id: 'home', label: 'Feed', to: '/feed' },
   { id: 'tweets', label: 'Tweets', to: '/tweets' },
   { id: 'library', label: 'Library', to: '/library' },
   { id: 'studio', label: 'Studio', to: '/studio' },
@@ -19,7 +19,7 @@ export function Shell() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <NavLink className="brand" to="/">
+        <NavLink className="brand" to="/feed">
           <span className="brand-mark">V</span>
           <span>Ventiq</span>
         </NavLink>

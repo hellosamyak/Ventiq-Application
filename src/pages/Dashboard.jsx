@@ -224,7 +224,7 @@ export function Dashboard({ activeView }) {
   }
 
   if (activeView === 'watch' && !videoId) {
-    return <Navigate replace to="/" />
+    return <Navigate replace to="/feed" />
   }
 
   if (activeView === 'watch' && selectedVideo) {

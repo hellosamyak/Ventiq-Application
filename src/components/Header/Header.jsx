@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 const routeMeta = [
-  { match: (path) => path === '/', eyebrow: 'Live creator feed', title: 'Creator feed', accent: 'Watch, post, and keep the room moving.' },
+  { match: (path) => path === '/feed', eyebrow: 'Live creator feed', title: 'Creator feed', accent: 'Watch, post, and keep the room moving.' },
   { match: (path) => path.startsWith('/watch'), eyebrow: 'Now playing', title: 'Watch', accent: 'Comments, likes, playlists, and channels stay close.' },
   { match: (path) => path.startsWith('/tweets'), eyebrow: 'Pulse', title: 'Tweets', accent: 'Short posts from your creator identity.' },
   { match: (path) => path.startsWith('/library'), eyebrow: 'Saved space', title: 'Library', accent: 'Playlists, liked videos, and your network.' },
@@ -46,7 +46,7 @@ export function Header({ onLogout }) {
         </div>
         <div className="header-stat">
           <span>Route</span>
-          <strong>{location.pathname === '/' ? 'Home' : location.pathname.split('/')[1]}</strong>
+          <strong>{location.pathname === '/feed' ? 'Feed' : location.pathname.split('/')[1]}</strong>
         </div>
         <div className="header-stat">
           <span>Session</span>
