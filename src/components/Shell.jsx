@@ -1,55 +1,56 @@
 import { useAuth } from '../hooks/useAuth'
+import { NavLink, Outlet } from 'react-router-dom'
+import { Footer } from './Footer'
+import { Header } from './Header'
 
 const navItems = [
-  { id: 'home', label: 'Home' },
-  { id: 'watch', label: 'Watch' },
-  { id: 'tweets', label: 'Tweets' },
-  { id: 'library', label: 'Library' },
-  { id: 'upload', label: 'Upload' },
+  { id: 'home', label: 'Home', to: '/' },
+  { id: 'tweets', label: 'Tweets', to: '/tweets' },
+  { id: 'library', label: 'Library', to: '/library' },
+  { id: 'studio', label: 'Studio', to: '/studio' },
+  { id: 'history', label: 'History', to: '/history' },
+  { id: 'subscriptions', label: 'Subscriptions', to: '/subscriptions' },
+  { id: 'upload', label: 'Upload', to: '/upload' },
 ]
 
-export function Shell({ activeView, onNavigate, children }) {
+export function Shell() {
   const { user, logout } = useAuth()
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <button className="brand" onClick={() => onNavigate('home')} type="button">
+        <NavLink className="brand" to="/">
           <span className="brand-mark">V</span>
           <span>Ventiq</span>
-        </button>
+        </NavLink>
 
         <nav className="nav-list" aria-label="Primary">
           {navItems.map((item) => (
-            <button
-              className={`nav-item ${activeView === item.id ? 'active' : ''}`}
+            <NavLink
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               key={item.id}
-              onClick={() => onNavigate(item.id)}
-              type="button"
+              to={item.to}
             >
               {item.label}
-            </button>
+            </NavLink>
           ))}
         </nav>
 
-        <div className="sidebar-profile">
+        <NavLink className="sidebar-profile" to="/account">
           <img alt="" src={user?.avatar} />
           <div>
             <strong>{user?.fullName}</strong>
             <span>@{user?.username}</span>
           </div>
-        </div>
+        </NavLink>
       </aside>
 
       <main className="main-panel">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">YouTube x Twitter workspace</p>
-            <h1>{activeView === 'home' ? 'Creator feed' : navItems.find((item) => item.id === activeView)?.label}</h1>
-          </div>
-          <button className="ghost-button" onClick={logout} type="button">Logout</button>
-        </header>
-        {children}
+        <Header onLogout={logout} />
+        <div className="route-surface">
+          <Outlet />
+        </div>
+        <Footer />
       </main>
     </div>
   )

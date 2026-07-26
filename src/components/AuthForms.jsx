@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
-export function AuthForms() {
+export function AuthForms({ initialMode = 'login' }) {
   const { login, register } = useAuth()
-  const [mode, setMode] = useState('login')
+  const navigate = useNavigate()
+  const [mode, setMode] = useState(initialMode)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -36,6 +38,7 @@ export function AuthForms() {
       await register(form)
       setMessage('Account created. Sign in to continue.')
       setMode('login')
+      navigate('/login')
     } catch (err) {
       setMessage(err.message)
     } finally {
@@ -56,8 +59,8 @@ export function AuthForms() {
 
       <section className="auth-panel">
         <div className="segmented-control">
-          <button className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')} type="button">Login</button>
-          <button className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')} type="button">Signup</button>
+          <button className={mode === 'login' ? 'active' : ''} onClick={() => { setMode('login'); navigate('/login') }} type="button">Login</button>
+          <button className={mode === 'signup' ? 'active' : ''} onClick={() => { setMode('signup'); navigate('/signup') }} type="button">Signup</button>
         </div>
 
         {mode === 'login' ? (
