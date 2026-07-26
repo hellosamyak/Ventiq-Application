@@ -75,6 +75,15 @@ export const api = {
     updateAccount(data) {
       return request('/users/update-account', { method: 'PATCH', body: data })
     },
+    changePassword(data) {
+      return request('/users/change-password', { method: 'POST', body: data })
+    },
+    updateAvatar(formData) {
+      return request('/users/avatar', { method: 'PATCH', body: formData })
+    },
+    updateCoverImage(formData) {
+      return request('/users/cover-image', { method: 'PATCH', body: formData })
+    },
   },
   videos: {
     list(params = {}) {
