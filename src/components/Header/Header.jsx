@@ -1,5 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { ChevronDown, LogOut, Menu, Plus, Settings, Upload } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
+import { ThemeToggle } from '../ThemeToggle'
 
 const routeMeta = [
   { match: (path) => path === '/feed', eyebrow: 'Live creator feed', title: 'Creator feed', accent: 'Watch, post, and keep the room moving.' },
@@ -15,42 +18,79 @@ const routeMeta = [
   { match: (path) => path.startsWith('/playlist'), eyebrow: 'Collection', title: 'Playlist', accent: 'Organize videos into a focused queue.' },
 ]
 
-export function Header({ onLogout }) {
+export function Header({ onLogout, onMenu }) {
   const { user } = useAuth()
   const location = useLocation()
   const meta = routeMeta.find((item) => item.match(location.pathname)) || routeMeta[0]
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+  const menuId = 'account-menu'
+
+  useEffect(() => {
+    function handlePointer(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) setMenuOpen(false)
+    }
+    function handleKey(event) {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handlePointer)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handlePointer)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [])
 
   return (
-    <header className="immersive-header">
-      <div className="header-main">
-        <div className="header-copy">
-          <p className="eyebrow">{meta.eyebrow}</p>
-          <h1>{meta.title}</h1>
-          <p>{meta.accent}</p>
-        </div>
+    <header className="topbar">
+      <button aria-label="Open menu" className="icon-btn lg:hidden" onClick={onMenu} type="button">
+        <Menu />
+      </button>
 
-        <div className="header-actions">
-          <Link className="ghost-button" to="/upload">Upload</Link>
-          <Link className="primary-button small" to="/studio">Studio</Link>
-          <button className="ghost-button" onClick={onLogout} type="button">Logout</button>
-        </div>
+      <div className="topbar-copy">
+        <p className="eyebrow">{meta.eyebrow}</p>
+        <h1>{meta.title}</h1>
       </div>
 
-      <div className="header-lens">
-        <div className="header-profile">
-          <img alt="" src={user?.avatar} />
-          <div>
-            <strong>{user?.fullName}</strong>
-            <span>@{user?.username}</span>
-          </div>
-        </div>
-        <div className="header-stat">
-          <span>Route</span>
-          <strong>{location.pathname === '/feed' ? 'Feed' : location.pathname.split('/')[1]}</strong>
-        </div>
-        <div className="header-stat">
-          <span>Session</span>
-          <strong>Active</strong>
+      <div className="topbar-actions">
+        <Link className="btn btn-secondary btn-sm hidden sm:inline-flex" to="/studio">
+          <Upload />
+          Studio
+        </Link>
+        <Link className="btn btn-primary btn-sm" to="/upload">
+          <Plus />
+          Upload
+        </Link>
+
+        <ThemeToggle />
+
+        <div className="relative" ref={menuRef}>
+          <button
+            aria-expanded={menuOpen}
+            aria-haspopup="menu"
+            aria-controls={menuId}
+            className="profile-chip"
+            onClick={() => setMenuOpen((value) => !value)}
+            type="button"
+          >
+            <img alt={user?.fullName || 'Account avatar'} className="avatar avatar-sm" loading="lazy" src={user?.avatar} />
+            <span>{user?.fullName}</span>
+            <ChevronDown />
+          </button>
+
+          {menuOpen ? (
+            <div className="menu-card" id={menuId} role="menu">
+              <Link className="menu-item" onClick={() => setMenuOpen(false)} role="menuitem" to="/account">
+                <Settings />
+                Account settings
+              </Link>
+              <div className="menu-divider" />
+              <button className="menu-item danger" onClick={() => { setMenuOpen(false); onLogout() }} role="menuitem" type="button">
+                <LogOut />
+                Log out
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     </header>
