@@ -1,5 +1,9 @@
 import { useState } from 'react'
+import { Rocket } from 'lucide-react'
 import { api } from '../api/client'
+import { Button } from './ui/Button'
+import { FileDrop } from './ui/FileDrop'
+import { Notice } from './ui/Notice'
 
 export function UploadVideo({ onUploaded }) {
   const [busy, setBusy] = useState(false)
@@ -13,38 +17,60 @@ export function UploadVideo({ onUploaded }) {
     try {
       const data = await api.videos.publish(new FormData(event.currentTarget))
       event.currentTarget.reset()
-      setMessage('Video uploaded.')
+      setMessage({ text: 'Video published successfully.', tone: 'success' })
       onUploaded?.(data)
     } catch (err) {
-      setMessage(err.message)
+      setMessage({ text: err.message, tone: 'error' })
     } finally {
       setBusy(false)
     }
   }
 
   return (
-    <section className="workspace-panel">
-      <h2>Upload video</h2>
-      <form className="form-grid" onSubmit={handleSubmit}>
-        <label>
-          Title
-          <input name="title" required />
-        </label>
-        <label>
-          Description
-          <textarea name="description" required />
-        </label>
-        <label>
-          Video file
-          <input accept="video/*" name="videoFile" required type="file" />
-        </label>
-        <label>
-          Thumbnail
-          <input accept="image/*" name="thumbnail" required type="file" />
-        </label>
-        <button className="primary-button" disabled={busy} type="submit">{busy ? 'Uploading...' : 'Publish video'}</button>
+    <section className="card card-pad-lg">
+      <div className="section-header">
+        <h2 className="section-title">
+          <Rocket />
+          Publish a new video
+        </h2>
+      </div>
+
+      <form className="grid gap-5" onSubmit={handleSubmit}>
+        <div className="grid gap-5 md:grid-cols-2">
+          <label className="field">
+            <span className="field-label">Title</span>
+            <input className="input" name="title" placeholder="A clear, honest title" required />
+          </label>
+          <label className="field">
+            <span className="field-label">Description</span>
+            <textarea className="input" name="description" placeholder="What is this video about?" required />
+          </label>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="field">
+            <span className="field-label">Video file</span>
+            <FileDrop accept="video/*" hint="MP4, MOV or WebM" label="Choose a video" name="videoFile" required variant="video" />
+          </div>
+          <div className="field">
+            <span className="field-label">Thumbnail</span>
+            <FileDrop accept="image/*" hint="16:9, at least 1280×720" label="Choose a thumbnail" name="thumbnail" required />
+          </div>
+        </div>
+
+        <div>
+          <Button disabled={busy} size="lg" type="submit">
+            <Rocket />
+            {busy ? 'Uploading…' : 'Publish video'}
+          </Button>
+        </div>
       </form>
-      {message ? <p className="form-message">{message}</p> : null}
+
+      {message ? (
+        <div className="mt-4">
+          <Notice message={message} />
+        </div>
+      ) : null}
     </section>
   )
 }
